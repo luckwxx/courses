@@ -10,7 +10,7 @@ class View
 
     function __construct($controller, $action)
     {
-        $this->_controller = $controller;
+        $this->_controller = strtolower($controller);
         $this->_action = $action;
     }
  
