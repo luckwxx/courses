@@ -9,7 +9,7 @@ class ItemController extends Controller
     {
         $items = (new ItemModel)->selectAll();
 
-        $this->assign('title', '全部条目');
+        $this->assign('title', '全部条目Test');
         $this->assign('items', $items);
         $this->render();
     }
