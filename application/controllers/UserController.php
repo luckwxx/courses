@@ -12,6 +12,10 @@ class UserController extends Controller
     }
 
     //注册
+
+    /**
+     *
+     */
     public function register()
     {
         // Check for required parameters
@@ -40,13 +44,21 @@ class UserController extends Controller
             }
             else {
                 $date = date('Y-m-d H:i:s');
-                $data = array('nickname' => $_POST['nickname'], 'create_time' => $date);
+                $data['nickname']=$_POST['nickname'];
+                $data['create_time']= $date;
                 $userModel->add($data);
+
                 $item = $userModel->query("select max(id) AS id  from users;");//
                 if (count($item) > 0) {
-                    $data = array('user_id' => $item["id"], 'identity_type' => $type, 'identifier' => $account, 'credential' => $password, 'create_time' => $date, 'login_time' => $date);
-                    $userAuthsModel->add($data);
+                    $data1['user_id']=$item["id"];
+                    $data1['identity_type']= $type;
+                    $data1['identifier']=$account;
+                    $data1['credential']=$password;
+                    $data1['create_time']=$date;
+                    $data1['login_time']=$date;
+                    $userAuthsModel->add($data1);
                 }
+                
                 $this->sendResponse(200, '', "注册成功");
             }
         }
