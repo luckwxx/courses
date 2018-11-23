@@ -23,7 +23,7 @@ class Sql
     {
         if (isset($where)) {
             $this->filter .= ' WHERE ';
-            $this->filter .= implode(' AND ', $where);
+            $this->filter .= implode(' ', $where);
         }
 
         return $this;

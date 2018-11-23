@@ -12,10 +12,6 @@ class UserController extends Controller
     }
 
     //注册
-
-    /**
-     *
-     */
     public function register()
     {
         // Check for required parameters
@@ -27,8 +23,8 @@ class UserController extends Controller
             $password = md5($_POST["password"]);
 
             $result = array(
-                "identity_type=".$type,
-                "identifier='".$account."'",
+                "identity_type=".$type." AND ",
+                "identifier='".$account."' AND ",
                 "credential='".$password."'",
             );
 
@@ -44,21 +40,24 @@ class UserController extends Controller
             }
             else {
                 $date = date('Y-m-d H:i:s');
-                $data['nickname']=$_POST['nickname'];
-                $data['create_time']= $date;
+
+                $data = array(
+                    'nickname'    => $_POST['nickname'],
+                    'create_time' => $date);
                 $userModel->add($data);
 
                 $item = $userModel->query("select max(id) AS id  from users;");//
                 if (count($item) > 0) {
-                    $data1['user_id']=$item["id"];
-                    $data1['identity_type']= $type;
-                    $data1['identifier']=$account;
-                    $data1['credential']=$password;
-                    $data1['create_time']=$date;
-                    $data1['login_time']=$date;
+                    $data1 = array(
+                        'user_id'       => $item["id"],
+                        'identity_type' => $type,
+                        'identifier'    => $account,
+                        'credential'    => $password,
+                        'create_time'   => $date,
+                        'login_time'    => $date);
                     $userAuthsModel->add($data1);
                 }
-                
+
                 $this->sendResponse(200, '', "注册成功");
             }
         }
@@ -77,8 +76,8 @@ class UserController extends Controller
             $password = md5($_POST["password"]);
 
             $result = array( 
-                "identity_type=".$type,
-                "identifier='".$account."'",
+                "identity_type=".$type." AND ",
+                "identifier='".$account."' AND ",
                 "credential='".$password."'",
             );
 
