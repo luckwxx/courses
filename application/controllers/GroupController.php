@@ -9,15 +9,17 @@ class GroupController extends Controller
         //web文件上传
         $imgname = $_FILES['img']['name'];
         $tmp = $_FILES['img']['tmp_name'];
-        $filepath = APP_PATH.'upload/img/';
-        if(move_uploaded_file($tmp,$filepath.$imgname)){
+
+        $dotArray = explode('.', $imgname); // 以.分割字符串，得到数组
+        $type = end($dotArray); // 得到最后一个元素：文件后缀
+        $filepath = APP_PATH.'upload/img/'.Tools::uuid().'.'.$type;
+        if(move_uploaded_file($tmp,$filepath)){
 //            echo "上传成功";
             $this->sendResponse(200, '', "注册成功");
         }else
             {
             $this->sendResponse(400, '');
         }
-
 
 //        $path = APP_PATH."upload/img/".Tools::uuid().".jpg";
 //
@@ -46,7 +48,24 @@ class GroupController extends Controller
     public function create()
     {
         // Check for required parameters
-        if (isset($_POST["title"]) && isset($_POST["user_id"]) &&isset($_POST["type"]) && isset($_POST["content_type"])) {
+        if (isset($_POST["title"]) && isset($_POST["user_id"]) ) {
+
+            $cover_image = '';
+            if (($_FILES["cover_image"]["type"] == "image/gif") ||
+                ($_FILES["cover_image"]["type"] == "image/jpeg") ||
+                ($_FILES["cover_image"]["type"] == "image/png") ||
+                ($_FILES["cover_image"]["type"] == "image/pjpeg"))
+            {
+                if ($_FILES["cover_image"]["error"] > 0) {
+                    $this->sendResponse(10004, '', $_FILES["cover_image"]["error"]);
+                } else {
+                    $fillname = $_FILES['cover_image']['name']; // 得到文件全名
+                    $dotArray = explode('.', $fillname);  // 以.分割字符串，得到数组
+                    $type = end($dotArray); // 得到最后一个元素：文件后缀
+                    $cover_image = "/upload/img/".md5(uniqid(rand())).'.'.$type; // 产生随机唯一的名字
+                    move_uploaded_file( $_FILES["cover_image"]["tmp_name"], APP_PATH.$cover_image);
+                }
+            }
 
             $groupModel = new GroupModel;
 
@@ -55,7 +74,7 @@ class GroupController extends Controller
                 "user_id"       => $_POST["user_id"],
                 'title'         => $_POST["title"],
                 'introduce'     => $_POST["introduce"],
-//                'cover_image' => "".$_POST["type"],
+                'cover_image'   => $cover_image,
                 'type'          => $_POST["type"],
                 'content_type'  => $_POST["content_type"],
                 'label'         => $_POST["label"],
@@ -104,6 +123,11 @@ class GroupController extends Controller
             );
             $groupModel->order($order);
             $items = $groupModel->selectAll();
+
+            foreach($items as &$item){
+                $item["cover_image"] = Tools::imageHost().$item["cover_image"];
+            }
+            unset($item); // 最后取消掉引用
 
             $this->sendResponse(200, $items);
         }

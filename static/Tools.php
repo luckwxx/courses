@@ -4,6 +4,8 @@
  */
 class Tools
 {
+    public static $config_host = [];
+
     // 渲染显示
     public static function saveImage($imgPath,$img)
     {
@@ -37,4 +39,18 @@ class Tools
         $uuid .= substr($chars,20,12);
         return $prefix . $uuid;
     }
+
+    public static function imageHost()
+    {
+        if(count(Tools::$config_host) == 0)
+            Tools::$config_host = require(APP_PATH . 'config/config_host.php');
+        return Tools::urlProtocol().Tools::$config_host['img_host'];
+    }
+
+    public static function urlProtocol()
+    {
+        $protocol = empty($_SERVER['HTTP_X_CLIENT_PROTO']) ? 'http://' : $_SERVER['HTTP_X_CLIENT_PROTO'] . '://';
+        return $protocol;
+    }
+
 }
