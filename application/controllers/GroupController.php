@@ -99,31 +99,16 @@ class GroupController extends Controller
     {
         // Check for required parameters
         if (1) {
-
             $pos_id = $_POST["pos_id"];
             $size   = $_POST["size"];
+            if(!isset($_POST["pos_id"])) $pos_id = 0;
+            if(!isset($_POST["size"]))   $size = 20;
 
-            if(!isset($_POST["pos_id"]))
-                $pos_id = 0;
-            if(!isset($_POST["size"]))
-                $size = 20;
-
-                $groupModel = new GroupModel;
-
+            $groupModel = new GroupModel;
             if($pos_id > 0)
-            {
-                $where = array(
-                    "id<".$pos_id
-                );
-                $groupModel->where($where);
-            }
-
-            $order = array(
-                "id DESC LIMIT ".$size
-            );
-            $groupModel->order($order);
+                $groupModel->where(array("id<".$pos_id));
+            $groupModel->order(array("update_time DESC LIMIT ".$size));
             $items = $groupModel->selectAll();
-
             foreach($items as &$item){
                 $item["cover_image"] = Tools::imageHost().$item["cover_image"];
             }
