@@ -1,14 +1,43 @@
 <?php
  require_once 'fastphp/Controller.class.php';
+ require_once 'static/Tools.php';
 
 class GroupController extends Controller
 {
     public function test()
     {
-        $groupModel = new GroupModel;
-        $items = $groupModel->query("select max(id) AS id  from course_group;");
+        //web文件上传
+        $imgname = $_FILES['img']['name'];
+        $tmp = $_FILES['img']['tmp_name'];
+        $filepath = APP_PATH.'upload/img/';
+        if(move_uploaded_file($tmp,$filepath.$imgname)){
+//            echo "上传成功";
+            $this->sendResponse(200, '', "注册成功");
+        }else
+            {
+            $this->sendResponse(400, '');
+        }
 
-        $this->sendResponse(200, $items, "注册成功");
+
+//        $path = APP_PATH."upload/img/".Tools::uuid().".jpg";
+//
+//        $byte=$_POST['test'];
+//        $byte = str_replace(' ','',$byte);   //处理数据
+//        $byte = str_ireplace("<",'',$byte);
+//        $byte = str_ireplace(">",'',$byte);
+//        $byte=pack("H*",$byte);      //16进制转换成二进制
+//        file_put_contents($path,$byte)//写入文件中！
+
+        //
+
+//        $img = $_POST["img"];
+//        Tools::saveImage($path,$img);
+
+
+//        $groupModel = new GroupModel;
+//        $items = $groupModel->query("select max(id) AS id  from course_group;");
+//
+//        $this->sendResponse(200, $items, "注册成功");
     }
 
     /*
