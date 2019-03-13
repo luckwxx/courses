@@ -4,7 +4,7 @@
 define('DB_NAME', 'courses');
 define('DB_USER', 'courses');
 define('DB_PASSWORD', 'courses');
-define('DB_HOST', '127.0.0.1');
+define('DB_HOST', 'localhost');
 
 
 $configDB['host'] = DB_HOST;
