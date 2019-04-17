@@ -41,8 +41,8 @@ CREATE TABLE `course_group` (
   `enroll` tinyint(1) NOT NULL DEFAULT '0',
   `top` tinyint(1) NOT NULL DEFAULT '0',
   `home` tinyint(1) NOT NULL DEFAULT '0',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `update_time` datetime NOT NULL ,
+  `create_time` datetime NOT NULL 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4  ;
 
 --
