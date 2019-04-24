@@ -139,8 +139,11 @@ class Fastphp
     public static function loadClass($class)
     {
         $frameworks = __DIR__ . '/' . $class . '.php';
-        $controllers = APP_PATH . 'application/controllers/' . $class . '.php';
-        $models = APP_PATH . 'application/models/' . $class . '.php';
+        $controllers = APP_PATH . 'application/courses/controllers/' . $class . '.php';
+        $models = APP_PATH . 'application/courses/models/' . $class . '.php';
+
+        $controllers1 = APP_PATH . 'application/appstore/controllers/' . $class . '.php';
+        $models1 = APP_PATH . 'application/appstore/models/' . $class . '.php';
 
         if (file_exists($frameworks)) {
             // 加载框架核心类
@@ -151,7 +154,14 @@ class Fastphp
         } elseif (file_exists($models)) {
             //加载应用模型类
             include $models;
-        } else {
+        } elseif (file_exists($controllers1)) {
+            // 加载应用控制器类
+            include $controllers1;
+        } elseif (file_exists($models1)) {
+            //加载应用模型类
+            include $models1;
+        }
+        else {
             // 错误代码
         }
     }

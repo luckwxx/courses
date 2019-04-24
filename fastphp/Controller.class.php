@@ -30,6 +30,13 @@ class Controller
         $this->_view->render();
     }
 
+    // 渲染视图
+    public function renderAppStore()
+    {
+        $this->_view->renderAppStore();
+    }
+
+
     //  返回Json
     public function sendResponse($code, $body, $msg = '')
     {
