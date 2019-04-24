@@ -104,6 +104,7 @@ class UserController extends Controller
             $count = $userAuthsModel->update($items[0]['id'], $data);
 
 
+            $item["token"] = "1234567890-0987654321234567890";
             $this->sendResponse(200,$item);
         }
         else

@@ -43,7 +43,7 @@ class AppsController extends Controller
     }
 
     /*
-     * 创建课程组
+     * 创建app
      */
     public function create()
     {
