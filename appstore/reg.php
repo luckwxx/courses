@@ -70,14 +70,32 @@
 <script type="text/javascript">
     $(function(){
         $("#submit").on("click",function(){
-            var str = $("form").serialize();
-            console.log(str);
-            $.post("../user/register",{"formData":str},function(data){
-                if(data=="true"){
-                    alert("注册成功！即将跳转登陆页！");
-                    location = "login.php";
-                }else{
+            var param = {"account":$("input[name='account']").val(),
+                "password":$("input[name='password']").val(),
+                "type":$("input[name='type']").val(),
+                "nickname":$("input[name='account']").val()};
+            // console.log(str);
+            $.post("../user/register",param,function(data){
+
+                var obj = data;
+                //判断是否为JSON对象
+                if(typeof(data) == "object" &&
+                    Object.prototype.toString.call(data).toLowerCase() == "[object object]" && !data.length){
+                    // alert("is JSON 0bject");
+                }
+                else
+                    obj = JSON.parse(data);
+
+                if(!obj){
                     alert("注册失败！因为啥我不知道！");
+                }else{
+                    if (parseInt(obj.code)== 200){
+                        alert("注册成功！即将跳转登陆页！");
+                        location = "login.php";
+                    }
+                    else{
+                        alert(obj.msg);
+                    }
                 }
             });
         });

@@ -89,8 +89,7 @@
                     alert("非json数据");
                 }else{
                     if (parseInt(obj.code)== 200){
-
-                        saveLoginToken(obj.data.token);
+                        saveLoginData(JSON.stringify(obj.data));
                         location = "index.php?nickname="+obj.data.nickname+"&user_id="+obj.data.id;
                     }
                     else{

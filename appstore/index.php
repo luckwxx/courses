@@ -14,10 +14,12 @@
             position: absolute;
             top: 3%;
             /*margin-top: -140px;*/
+            text-align:right;
+            margin-right: 20px;
         }
 
-        .loginbtn{
-            width: 130px;
+        .login{
+            width: 100%;
             float: right;
         }
 
@@ -40,7 +42,8 @@
 <body>
 <div>
     <div class="panel panel-primary">
-        <div class="loginbtn">
+        <div class="login">
+            <a type="button" id="nickname"/></a>
             <a type="button" id="login"  href="login.php"/>登录</a>
             <a type="button" id="reg"    href="reg.php"/>注册</a>
             <a type="button" id="logout" href=""/> 退出</a>
@@ -48,23 +51,29 @@
     </div>
 
     <div class="apps" id="apps" >
-        <h3>adsghdgfh</h3>
+        <h1>App 列表</h1>
     </div>
 </div>
 
 <script type="text/javascript">
-    var token = loadLoginToken();
-    document.getElementById("login").style.visibility  = (!token)?"visible":"hidden";
-    document.getElementById("reg").style.visibility    = (!token)?"visible":"hidden";
-    document.getElementById("logout").style.visibility = (!token)?"hidden":"visible";
-    document.getElementById("apps").style.visibility = (!token)?"hidden":"visible";
+    var loginData = loadLoginData();
+    document.getElementById("login").style.display      = (!loginData)?"block":"none";
+    document.getElementById("reg").style.display        = (!loginData)?"block":"none";
+    document.getElementById("logout").style.display     = (!loginData)?"none":"block";
+    document.getElementById("apps").style.display       = (!loginData)?"none":"block";
+    document.getElementById("nickname").style.display   = (!loginData)?"none":"block";
+    if(!loginData)
+        document.getElementById("nickname").textContent="";
+    else
+        document.getElementById("nickname").textContent=loginData['nickname'];
+
 </script>
 
 <script src="https://code.jquery.com/jquery-3.4.0.js"></script>
 <script type="text/javascript">
     $(function(){
         $("#logout").on("click",function(){
-            delLoginToken();
+            delLoginData();
             location = "index.php";
         });
     });

@@ -1,23 +1,25 @@
-var token;
-function saveLoginToken(curtoken, type = 'localStorage') {
-    token = curtoken;
+
+function saveLoginData(loginData, type = 'localStorage') {
     if (type == 'session') {
-        sessionStorage.setItem('token', curtoken);
+        sessionStorage.setItem('loginData', loginData);
     } else {
-        localStorage.setItem('token', curtoken);
+        localStorage.setItem('loginData', loginData);
     }
 }
 
-function loadLoginToken(type = 'localStorage') {
+function loadLoginData(type = 'localStorage') {
+    var loginData;
     if (type == 'session') {
-        token = sessionStorage.getItem('token');
+        loginData = sessionStorage.getItem('loginData');
     } else {
-        token = localStorage.getItem('token');
+        loginData = localStorage.getItem('loginData');
     }
-    return token;
+
+    return JSON.parse(loginData);
 }
 
 //localStorage删除指定键对应的值
-function delLoginToken(){
-    localStorage.removeItem('token');
+function delLoginData(){
+    localStorage.removeItem('loginData');
 }
+
