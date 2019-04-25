@@ -25,11 +25,11 @@ class View
     {
         extract($this->variables);
         $defaultHeader = APP_PATH . 'application/courses/views/header.php';
-        $defaultFooter = APP_PATH . 'application/courses/footer.php';
+        $defaultFooter = APP_PATH . 'application/courses/views/footer.php';
 
-        $controllerHeader = APP_PATH . 'application/courses/' . $this->_controller . '/header.php';
-        $controllerFooter = APP_PATH . 'application/courses/' . $this->_controller . '/footer.php';
-        $controllerLayout = APP_PATH . 'application/courses/' . $this->_controller . '/' . $this->_action . '.php';
+        $controllerHeader = APP_PATH . 'application/courses/views/' . $this->_controller . '/header.php';
+        $controllerFooter = APP_PATH . 'application/courses/views/' . $this->_controller . '/footer.php';
+        $controllerLayout = APP_PATH . 'application/courses/views/' . $this->_controller . '/' . $this->_action . '.php';
 
         // 页头文件
         if (file_exists($controllerHeader)) {
@@ -53,11 +53,11 @@ class View
     {
         extract($this->variables);
         $defaultHeader = APP_PATH . 'application/apps/views/header.php';
-        $defaultFooter = APP_PATH . 'application/apps/footer.php';
+        $defaultFooter = APP_PATH . 'application/apps/views/footer.php';
 
-        $controllerHeader = APP_PATH . 'application/apps/' . $this->_controller . '/header.php';
-        $controllerFooter = APP_PATH . 'application/apps/' . $this->_controller . '/footer.php';
-        $controllerLayout = APP_PATH . 'application/apps/' . $this->_controller . '/' . $this->_action . '.php';
+        $controllerHeader = APP_PATH . 'application/apps/views/' . $this->_controller . '/header.php';
+        $controllerFooter = APP_PATH . 'application/apps/views/' . $this->_controller . '/footer.php';
+        $controllerLayout = APP_PATH . 'application/apps/views/' . $this->_controller . '/' . $this->_action . '.php';
 
         // 页头文件
         if (file_exists($controllerHeader)) {

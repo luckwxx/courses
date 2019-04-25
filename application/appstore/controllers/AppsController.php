@@ -104,14 +104,14 @@ class AppsController extends Controller
             if(!isset($_POST["pos_id"])) $pos_id = 0;
             if(!isset($_POST["size"]))   $size = 20;
 
-            $groupModel = new GroupModel;
+            $appsModel = new AppsModel;
             if($pos_id > 0)
-                $groupModel->where(array("id<".$pos_id));
-            $groupModel->order(array("update_time DESC LIMIT ".$size));
-            $items = $groupModel->selectAll();
-            foreach($items as &$item){
-                $item["cover_image"] = Tools::imageHost().$item["cover_image"];
-            }
+                $appsModel->where(array("id<".$pos_id));
+            $appsModel->order(array("update_time DESC LIMIT ".$size));
+            $items = $appsModel->selectAll();
+//            foreach($items as &$item){
+//                $item["cover_image"] = Tools::imageHost().$item["cover_image"];
+//            }
             unset($item); // 最后取消掉引用
 
             $this->sendResponse(200, $items);

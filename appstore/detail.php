@@ -4,36 +4,36 @@
     <title>App Store</title>
 
     <style type="text/css">
-        body{
-            margin: 0px;
+    body{
+    margin: 0px;
             padding: 0px;
             background-color: #CCCCCC;
         }
         .panel{
-            width: 100%;
-            position: absolute;
-            top: 3%;
-            /*margin-top: -140px;*/
-            text-align:right;
+    width: 100%;
+    position: absolute;
+    top: 3%;
+    /*margin-top: -140px;*/
+    text-align:right;
             margin-right: 20px;
         }
 
         .login{
-            width: 100%;
-            float: right;
-        }
+    width: 100%;
+    float: right;
+}
 
         .apps{
-            width: 100%;
-            margin-top: 40px;
+    width: 100%;
+    margin-top: 40px;
         }
 
         .form-horizontal{
-            padding: 10px 20px;
+    padding: 10px 20px;
         }
         .btns{
-            display: flex;
-            justify-content: center;
+    display: flex;
+    justify-content: center;
         }
     </style>
     <script src="user.js"></script>
@@ -52,42 +52,16 @@
     </div>
 
     <div class="apps" id="apps" >
-        <h1>App 列表</h1>
+        <h1>App 详情</h1>
     </div>
 </div>
 
 <script type="text/javascript">
 
-    function appsList(){
+    function appsDetail(){
         var param = {"pos_id":0, "size":10};
         $.post("../apps/list",param,function(data){
-            var obj = data;
-            //判断是否为JSON对象
-            if(typeof(data) == "object" &&
-                Object.prototype.toString.call(data).toLowerCase() == "[object object]" && !data.length){
-                // alert("is JSON 0bject");
-            }
-            else
-                obj = JSON.parse(data);
 
-            if(!obj){
-                $("#apps tbody").append("暂无数据！");
-            }else{
-                if (parseInt(obj.code)== 200){
-                    for(let index in obj.data) {
-                        console.log(index,obj.data[index]);
-
-                        var elem_li = document.createElement('li'); // 生成一个 li元素
-                        elem_li.innerHTML = "<a type=\"button\" class=\"app_detail\" href=\"detail.php?app_id="+obj.data[index].id +"\"/>" + obj.data[index].name + "</a>  " + obj.data[index].describe; // 设置元素的内容
-                        document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
-
-                        // $("#apps tbody").append(obj.data[index].toString()+"<br>");
-                    };
-                }
-                else{
-                    alert(obj.msg);
-                }
-            }
         });
     }
 
