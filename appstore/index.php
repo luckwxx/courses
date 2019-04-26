@@ -37,7 +37,10 @@
         }
     </style>
     <script src="user.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.0.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.4.0.js"
+            integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo="
+            crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -52,14 +55,15 @@
     </div>
 
     <div class="apps" id="apps" >
-        <h1>App 列表</h1>
+        <h2><a type="button" id="create" href="create.php"/>创建 App</a></h2>
+        <h2>App 列表</h2>
     </div>
 </div>
 
 <script type="text/javascript">
 
     function appsList(){
-        var param = {"pos_id":0, "size":10};
+        var param = {"pos_id":0, "size":30};
         $.post("../apps/list",param,function(data){
             var obj = data;
             //判断是否为JSON对象
@@ -71,7 +75,10 @@
                 obj = JSON.parse(data);
 
             if(!obj){
-                $("#apps tbody").append("暂无数据！");
+                var elem_li = document.createElement('li'); // 生成一个 li元素
+                elem_li.innerHTML = "暂无数据"; // 设置元素的内容
+                document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
+
             }else{
                 if (parseInt(obj.code)== 200){
                     for(let index in obj.data) {

@@ -132,4 +132,24 @@ class Tools
         return false;
     }
 
+//检查并创建多级目录
+    public static function checkDir($path){
+        $pathArray = explode('/',$path);
+        $nowPath = '';
+        array_pop($pathArray);
+        foreach ($pathArray as $key=>$value){
+            if ( ''==$value ){
+                unset($pathArray[$key]);
+            }else{
+                if ( $key == 0 )
+                    $nowPath .= $value;
+                else
+                    $nowPath .= '/'.$value;
+                if ( !is_dir($nowPath) ){
+                    if ( !mkdir($nowPath, 0777) ) return false;
+                }
+            }
+        }
+        return true;
+    }
 }

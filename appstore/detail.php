@@ -59,9 +59,41 @@
 <script type="text/javascript">
 
     function appsDetail(){
-        var param = {"pos_id":0, "size":10};
-        $.post("../apps/list",param,function(data){
 
+        var app_id = GetUrlParam("app_id");
+
+        var param = {"app_id":app_id};
+        $.post("../apps/detail",param,function(data){
+            var obj = data;
+            //判断是否为JSON对象
+            if(typeof(data) == "object" &&
+                Object.prototype.toString.call(data).toLowerCase() == "[object object]" && !data.length){
+                // alert("is JSON 0bject");
+            }
+            else
+                obj = JSON.parse(data);
+
+            if(!obj){
+                var elem_li = document.createElement('li'); // 生成一个 li元素
+                elem_li.innerHTML = "查询为空"; // 设置元素的内容
+                document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
+
+            }else{
+                if (parseInt(obj.code)== 200){
+                    console.log(obj.data);
+
+                    var elem_li = document.createElement('li'); // 生成一个 li元素
+                    elem_li.innerHTML =  obj.data.name ; // 设置元素的内容
+                    document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
+
+                    var elem_li = document.createElement('li'); // 生成一个 li元素
+                    elem_li.innerHTML = obj.data.describe; // 设置元素的内容
+                    document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
+                }
+                else{
+                    alert(obj.msg);
+                }
+            }
         });
     }
 
@@ -83,8 +115,9 @@
     }
     else {
         document.getElementById("nickname").textContent = loginData['nickname'];
-        appsList();
+        appsDetail();
     }
+
 
     $(function(){
         $("#logout").on("click",function(){

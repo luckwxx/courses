@@ -48,53 +48,143 @@ class AppsController extends Controller
     public function create()
     {
         // Check for required parameters
-        if (isset($_POST["title"]) && isset($_POST["user_id"]) ) {
+        if (isset($_POST["name"]) &&
+            isset($_POST["type"]) &&
+            isset($_POST["token"]) &&
+            isset($_POST["ver"])) {
 
-            $cover_image = '';
-            if (($_FILES["cover_image"]["type"] == "image/gif") ||
-                ($_FILES["cover_image"]["type"] == "image/jpeg") ||
-                ($_FILES["cover_image"]["type"] == "image/png") ||
-                ($_FILES["cover_image"]["type"] == "image/pjpeg"))
-            {
-                if ($_FILES["cover_image"]["error"] > 0) {
-                    $this->sendResponse(10004, '', $_FILES["cover_image"]["error"]);
-                } else {
-                    $fillname = $_FILES['cover_image']['name']; // 得到文件全名
-                    $dotArray = explode('.', $fillname);  // 以.分割字符串，得到数组
-                    $type = end($dotArray); // 得到最后一个元素：文件后缀
-                    $cover_image = "/upload/img/".md5(uniqid(rand())).'.'.$type; // 产生随机唯一的名字
-                    move_uploaded_file( $_FILES["cover_image"]["tmp_name"], APP_PATH.$cover_image);
+            $de_json = json_decode(base64_decode($_POST["token"]),TRUE);
+            $user_id = $de_json["user_id"];
+            if(!$user_id){
+                $this->sendResponse(10000,'',"参数错误");
+                return;
+            }
+
+
+            $logo0 = '';
+            $logo1 = '';
+            $package = '';
+
+            $app_id = 0;
+            $appsModel = new AppsModel();
+            //获取app_id
+            $item = $appsModel->query("select max(id) AS id from apps;");//
+            if (count($item) > 0) {
+                $app_id = intval($item["id"])+1;
+            }
+
+            $fileDir = "upload/apps/".strval($app_id)."/".strval($_POST["ver"])."/";
+            Tools::checkDir("./".$fileDir);
+
+            //上传$logo0
+            if ($_FILES['logo0']["error"] > 0) {
+                $this->sendResponse(10004, '', $_FILES["logo0"]["error"]);
+            } else {
+                $imgname = $_FILES['logo0']['name'];
+                $tmp = $_FILES['logo0']['tmp_name'];
+
+                $dotArray = explode('.', $imgname); // 以.分割字符串，得到数组
+                $type = end($dotArray); // 得到最后一个元素：文件后缀
+
+                $logo0 = $fileDir.'logo57x57.'.$type;
+                $filepath = APP_PATH.$logo0;
+                $logo0 = "/".$logo0;
+
+                if(move_uploaded_file($tmp,$filepath)){
+                    //echo "上传成功";
+                }else
+                {
+                    $logo0 = '';
                 }
             }
 
-            $groupModel = new GroupModel;
+            //上传$logo1
+            if ($_FILES['logo1']["error"] > 0) {
+                $this->sendResponse(10004, '', $_FILES['logo1']["error"]);
+            } else {
+                $imgname = $_FILES['logo1']['name'];
+                $tmp = $_FILES['logo1']['tmp_name'];
+
+                $dotArray = explode('.', $imgname); // 以.分割字符串，得到数组
+                $type = end($dotArray); // 得到最后一个元素：文件后缀
+
+                $logo1 = $fileDir.'logo.512x512.'.$type;
+                $filepath = APP_PATH.$logo1;
+                $logo1 = "/".$logo1;
+
+                if(move_uploaded_file($tmp,$filepath)){
+                    //echo "上传成功";
+                }else
+                {
+                    $logo1 = '';
+                }
+            }
+
+            //上传 $package
+            if ($_FILES['package']["error"] > 0) {
+                $this->sendResponse(10004, '', $_FILES['package']["error"]);
+            } else {
+                $imgname = $_FILES['package']['name'];
+                $tmp = $_FILES['package']['tmp_name'];
+
+                $dotArray = explode('.', $imgname); // 以.分割字符串，得到数组
+                $type = end($dotArray); // 得到最后一个元素：文件后缀
+
+                $package = "/".$fileDir.$imgname;
+
+                $filepath = APP_PATH.$fileDir.$imgname;
+                if(move_uploaded_file($tmp,$filepath)){
+                    //echo "上传成功";
+                }else
+                {
+                    $package = '';
+                }
+            }
+
+
+            $appVersModel = new AppVersModel();
+            $appVerID = 0;
+            //获取app_id
+            $item = $appVersModel->query("select max(id) AS id from app_vers;");//
+            if (count($item) > 0) {
+                $appVerID = intval($item["id"])+1;
+            }
+
 
             $date = date('Y-m-d H:i:s');
             $data = array(
-                "user_id"       => $_POST["user_id"],
-                'title'         => $_POST["title"],
-                'introduce'     => $_POST["introduce"],
-                'cover_image'   => $cover_image,
-                'type'          => $_POST["type"],
-                'content_type'  => $_POST["content_type"],
-                'label'         => $_POST["label"],
-                'color'         => $_POST["color"],
-                'enroll'        => $_POST["enroll"],
+                "ver"            => $_POST["ver"],
+                'app_id'         => $app_id,
+                'package'        => $package,
+                'ver_build'      => $_POST["ver_build"],
                 'create_time'   => $date,
                 'update_time'   => $date);
+            $appVersModel->add($data);
 
-            $groupModel->add($data);
+            $data1 = array(
+                "name"        => $_POST["name"],
+                'subname'     => $_POST["subname"],
+                'describe'     => $_POST["describe"],
+                'user_id'   => $user_id,
+                'ver_id'   => $appVerID,
+                'type'   => $_POST["type"],
+                'logo0'   => $logo0,
+                'logo1'   => $logo1,
 
-            $this->sendResponse(200, '', "创建成功");
+                'create_time' => $date,
+                'update_time' => $date);
+            $appsModel->add($data1);
+
+            $this->sendResponse(200, $data1, "创建成功");
         }
         else
             $this->sendResponse(10000,'',"参数错误");
     }
 
-    /*
-     *  id
-     *  size
-     */
+/*
+ *  pos_id
+ *  size
+ */
     public function list()
     {
         // Check for required parameters
@@ -120,12 +210,19 @@ class AppsController extends Controller
             $this->sendResponse(10000,'',"参数错误");
     }
 
-    /*主页推荐
-     *  id
-     *  size
+    /*
+     *  app_id
+     *
      */
-    public function focus()
+    public function detail()
     {
-        $items = (new ItemModel)->selectAll();
+        // Check for required parameters
+        $app_id = $_POST["app_id"];
+        if (isset($app_id) ) {
+            $item = (new AppsModel)->select($app_id);
+            $this->sendResponse(200, $item);
+        }
+        else
+            $this->sendResponse(10000,'',"参数错误");
     }
 }

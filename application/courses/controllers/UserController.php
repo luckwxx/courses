@@ -103,8 +103,8 @@ class UserController extends Controller
             $data = array('id' => $items[0]['id'], 'login_time'=> date('Y-m-d H:i:s'));
             $count = $userAuthsModel->update($items[0]['id'], $data);
 
-
-            $item["token"] = "1234567890-0987654321234567890";
+            $token = "{\"user_id\":".strval($user_id)."}";
+            $item["token"] =  base64_encode($token);
             $this->sendResponse(200,$item);
         }
         else
