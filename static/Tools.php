@@ -147,6 +147,7 @@ class Tools
                     $nowPath .= '/'.$value;
                 if ( !is_dir($nowPath) ){
                     if ( !mkdir($nowPath, 0777) ) return false;
+                    else chmod($nowPath, 0777);
                 }
             }
         }

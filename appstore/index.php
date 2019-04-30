@@ -64,7 +64,7 @@
 
     function appsList(){
         var param = {"pos_id":0, "size":30};
-        $.post("../apps/list",param,function(data){
+        $.post("../apps/applist",param,function(data){
             var obj = data;
             //判断是否为JSON对象
             if(typeof(data) == "object" &&
@@ -85,7 +85,7 @@
                         console.log(index,obj.data[index]);
 
                         var elem_li = document.createElement('li'); // 生成一个 li元素
-                        elem_li.innerHTML = "<a type=\"button\" class=\"app_detail\" href=\"detail.php?app_id="+obj.data[index].id +"\"/>" + obj.data[index].name + "</a>  " + obj.data[index].describe; // 设置元素的内容
+                        elem_li.innerHTML = obj.data[index].id + "   <a type=\"button\" class=\"app_detail\" href=\"detail.php?app_id="+obj.data[index].id +"\"/>" + obj.data[index].name + "</a>  " + obj.data[index].describe; // 设置元素的内容
                         document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
 
                         // $("#apps tbody").append(obj.data[index].toString()+"<br>");

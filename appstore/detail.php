@@ -89,6 +89,10 @@
                     var elem_li = document.createElement('li'); // 生成一个 li元素
                     elem_li.innerHTML = obj.data.describe; // 设置元素的内容
                     document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
+
+                    var elem_li = document.createElement('li'); // 生成一个 li元素
+                    elem_li.innerHTML = "<a type=\"button\" class=\"download\" href=\"../upload/apps/"+obj.data.id + "/" +"1.0" +"\"/>下载安装</a>  "; // 设置元素的内容
+                    document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
                 }
                 else{
                     alert(obj.msg);

@@ -4,44 +4,6 @@
 
 class AppsController extends Controller
 {
-    public function test()
-    {
-        //web文件上传
-        $imgname = $_FILES['img']['name'];
-        $tmp = $_FILES['img']['tmp_name'];
-
-        $dotArray = explode('.', $imgname); // 以.分割字符串，得到数组
-        $type = end($dotArray); // 得到最后一个元素：文件后缀
-        $filepath = APP_PATH.'upload/img/'.Tools::uuid().'.'.$type;
-        if(move_uploaded_file($tmp,$filepath)){
-//            echo "上传成功";
-            $this->sendResponse(200, '', "注册成功");
-        }else
-            {
-            $this->sendResponse(400, '');
-        }
-
-//        $path = APP_PATH."upload/img/".Tools::uuid().".jpg";
-//
-//        $byte=$_POST['test'];
-//        $byte = str_replace(' ','',$byte);   //处理数据
-//        $byte = str_ireplace("<",'',$byte);
-//        $byte = str_ireplace(">",'',$byte);
-//        $byte=pack("H*",$byte);      //16进制转换成二进制
-//        file_put_contents($path,$byte)//写入文件中！
-
-        //
-
-//        $img = $_POST["img"];
-//        Tools::saveImage($path,$img);
-
-
-//        $groupModel = new GroupModel;
-//        $items = $groupModel->query("select max(id) AS id  from course_group;");
-//
-//        $this->sendResponse(200, $items, "注册成功");
-    }
-
     /*
      * 创建app
      */
@@ -53,18 +15,15 @@ class AppsController extends Controller
             isset($_POST["token"]) &&
             isset($_POST["ver"])) {
 
+            //验证token
             $de_json = json_decode(base64_decode($_POST["token"]),TRUE);
             $user_id = $de_json["user_id"];
             if(!$user_id){
-                $this->sendResponse(10000,'',"参数错误");
+                $this->sendResponse(10000,'',"token参数错误");
                 return;
             }
 
-
-            $logo0 = '';
-            $logo1 = '';
-            $package = '';
-
+            //获取要创建app_id
             $app_id = 0;
             $appsModel = new AppsModel();
             //获取app_id
@@ -73,83 +32,39 @@ class AppsController extends Controller
                 $app_id = intval($item["id"])+1;
             }
 
-            $fileDir = "upload/apps/".strval($app_id)."/".strval($_POST["ver"])."/";
-            Tools::checkDir("./".$fileDir);
 
-            //上传$logo0
-            if ($_FILES['logo0']["error"] > 0) {
-                $this->sendResponse(10004, '', $_FILES["logo0"]["error"]);
-            } else {
-                $imgname = $_FILES['logo0']['name'];
-                $tmp = $_FILES['logo0']['tmp_name'];
-
-                $dotArray = explode('.', $imgname); // 以.分割字符串，得到数组
-                $type = end($dotArray); // 得到最后一个元素：文件后缀
-
-                $logo0 = $fileDir.'logo57x57.'.$type;
-                $filepath = APP_PATH.$logo0;
-                $logo0 = "/".$logo0;
-
-                if(move_uploaded_file($tmp,$filepath)){
-                    //echo "上传成功";
-                }else
-                {
-                    $logo0 = '';
-                }
+            $appDir = "upload/apps/".strval($app_id)."/";
+            $packageDir = $appDir.strval($_POST["ver"])."/";
+            //上传安装包
+            $package = $this->saveUploadFile($packageDir,'package');
+            if ( $package === '') {//没有安装包报错
+                $this->sendResponse(10001,'',"上传安装包错误");
+                return;
             }
 
-            //上传$logo1
-            if ($_FILES['logo1']["error"] > 0) {
-                $this->sendResponse(10004, '', $_FILES['logo1']["error"]);
-            } else {
-                $imgname = $_FILES['logo1']['name'];
-                $tmp = $_FILES['logo1']['tmp_name'];
+            //上传图片
+            $logo0   = $this->saveUploadFile($appDir,'logo0','logo57x57');
+            $logo1   = $this->saveUploadFile($appDir,'logo1','logo512x512');
 
-                $dotArray = explode('.', $imgname); // 以.分割字符串，得到数组
-                $type = end($dotArray); // 得到最后一个元素：文件后缀
+            //创建index.html href="itms-services:///?action=download-manifest&url=https://hanjx.tk/app/vhallyundemo/manifest.plist"
+            $packageHost = 'https://hanjx.tk/';
+            $plistUrl = $packageHost.$packageDir.'manifest.plist';
+            $this->writeIndexFile($packageDir,$_POST["name"],$_POST["describe"],$plistUrl);
 
-                $logo1 = $fileDir.'logo.512x512.'.$type;
-                $filepath = APP_PATH.$logo1;
-                $logo1 = "/".$logo1;
+            //创建manifest.plist
+            $bundleid = 'com.vhallyun.sdk';
+            $bundleversion = $_POST["ver"];
+            $title = $_POST["name"];
 
-                if(move_uploaded_file($tmp,$filepath)){
-                    //echo "上传成功";
-                }else
-                {
-                    $logo1 = '';
-                }
-            }
-
-            //上传 $package
-            if ($_FILES['package']["error"] > 0) {
-                $this->sendResponse(10004, '', $_FILES['package']["error"]);
-            } else {
-                $imgname = $_FILES['package']['name'];
-                $tmp = $_FILES['package']['tmp_name'];
-
-                $dotArray = explode('.', $imgname); // 以.分割字符串，得到数组
-                $type = end($dotArray); // 得到最后一个元素：文件后缀
-
-                $package = "/".$fileDir.$imgname;
-
-                $filepath = APP_PATH.$fileDir.$imgname;
-                if(move_uploaded_file($tmp,$filepath)){
-                    //echo "上传成功";
-                }else
-                {
-                    $package = '';
-                }
-            }
-
-
+            $this->writePlistFile($packageDir,$packageHost.$package,$packageHost.$logo0,$packageHost.$logo1, $bundleid,$bundleversion,$title);
+            //入库
             $appVersModel = new AppVersModel();
             $appVerID = 0;
-            //获取app_id
+            //获取 appVerID
             $item = $appVersModel->query("select max(id) AS id from app_vers;");//
             if (count($item) > 0) {
                 $appVerID = intval($item["id"])+1;
             }
-
 
             $date = date('Y-m-d H:i:s');
             $data = array(
@@ -185,7 +100,7 @@ class AppsController extends Controller
  *  pos_id
  *  size
  */
-    public function list()
+    public function applist()
     {
         // Check for required parameters
         if (1) {
@@ -225,4 +140,157 @@ class AppsController extends Controller
         else
             $this->sendResponse(10000,'',"参数错误");
     }
+
+    /*
+     * 上传文件 目录，文件参数key，文件重命名
+     */
+    function saveUploadFile($dir,$filename,$rename = '')
+    {
+        if (!isset($_FILES[$filename])) return '';
+
+        Tools::checkDir("./".$dir);//检查目录是否存在并创建
+
+        //上传文件
+        if ($_FILES[$filename]["error"] > 0) {
+
+            echo 'error'.$_FILES[$filename]["error"];
+
+            return '';
+        } else {
+            $imgname = $_FILES[$filename]['name'];
+            $tmp = $_FILES[$filename]['tmp_name'];
+
+            $filepath = '/'.$dir;
+            if($rename == '') {
+                $filepath = $filepath.$imgname;
+            }
+            else {
+                $dotArray = explode('.', $imgname); // 以.分割字符串，得到数组
+                $type = end($dotArray); // 得到最后一个元素：文件后缀
+
+                $filepath = $filepath.$rename.'.'.$type;
+            }
+
+            if(move_uploaded_file($tmp,APP_PATH.$filepath)){
+                //echo "上传成功";
+                return $filepath;
+            }else
+            {
+                return '';
+            }
+        }
+    }
+
+    /*
+     * 创建并写入index文件
+     */
+    function writeIndexFile($packageDir,$title,$desc,$plisturl)
+    {
+        $myfile = fopen('./'.$packageDir."/index.html", "w") or die("Unable to open file!");
+
+        $txt = '<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="x-dns-prefetch-control" content="on" />
+    <meta name="renderer" content="webkit">
+    <link rel="dns-prefetch" href="//cnstatic01.e.vhall.com/3rdlibs" />
+    <link rel="dns-prefetch" href="//cnstatic01.e.vhall.com/static" />
+    <title>App下载</title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="//cnstatic01.e.vhall.com/static/css/project/app/app_mobile.css?v=20161221">
+    <script>
+    </script>
+</head>
+
+<body>
+<div class="wrapper section-app">
+    <h1 class="title">';
+        $txt = $txt.$title;
+        $txt = $txt.'</h1>
+<p class="desc">';
+        $txt = $txt.$desc;
+        $txt = $txt.'</p>
+<section style="padding-top: 150px;" class="footer">
+<a href="itms-services:///?action=download-manifest&url=';
+        $txt = $txt.$plisturl;
+        $txt = $txt.'" class="btn btn-download open-app" >APP下载</a>
+    </section>
+    <p style="font-size:10px" class="desc">未受信任的企业级开发者解决方法</p>
+    <p style="font-size:10px" class="desc">设置 -> 通用 -> 描述文件 -> Beijing Vhall Technology co.,Ltd. 点击信任</p>
+</div>
+</body>
+<script src="//cnstatic01.e.vhall.com/3rdlibs/jquery/1.11.2/jquery.min.js"></script>
+</html>';
+        fwrite($myfile, $txt);
+        fclose($myfile);
+    }
+
+    function writePlistFile($packageDir,$packageUrl,$logo0Url,$logo1Url,$bundleid,$bundleversion,$title)
+    {
+        $myfile = fopen('./'.$packageDir."/manifest.plist", "w") or die("Unable to open file!");
+
+        $txt = '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>assets</key>
+			<array>
+				<dict>
+					<key>kind</key>
+					<string>software-package</string>
+					<key>url</key>
+					<string>';
+        $txt = $txt.$packageUrl;
+        $txt = $txt.'</string>
+				</dict>
+				<dict>
+					<key>kind</key>
+					<string>display-image</string>
+					<key>url</key>
+					<string>';
+        $txt = $txt.$logo0Url;
+        $txt = $txt.'</string>
+				</dict>
+				<dict>
+					<key>kind</key>
+					<string>full-size-image</string>
+					<key>url</key>
+					<string>';
+        $txt = $txt.$logo1Url;
+        $txt = $txt.'</string>
+				</dict>
+			</array>
+			<key>metadata</key>
+			<dict>
+				<key>bundle-identifier</key>
+				<string>';
+        $txt = $txt.$bundleid;
+        $txt = $txt.'</string>
+				<key>bundle-version</key>
+				<string>';
+        $txt = $txt.$bundleversion;
+        $txt = $txt.'</string>
+				<key>kind</key>
+				<string>software</string>
+				<key>title</key>
+				<string>';
+        $txt = $txt.$title;
+        $txt = $txt.'</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>
+';
+        fwrite($myfile, $txt);
+        fclose($myfile);
+    }
+
 }
