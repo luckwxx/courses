@@ -50,7 +50,7 @@
     .div-c{ float:left;width:100%;}
 
     </style>
-    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+<!--    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"/>-->
     <script src="user.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.0.js"></script>
 </head>

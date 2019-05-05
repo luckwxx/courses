@@ -12,7 +12,7 @@
             background-color: #CCCCCC;
         }
         .panel{
-            width: 380px;
+            width: 280px;
             height: 350px;
             position: absolute;
             left: 50%;
