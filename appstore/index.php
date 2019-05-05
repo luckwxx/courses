@@ -26,6 +26,11 @@
 
         .apps{
             width: 100%;
+            margin-top: 0px;
+        }
+
+        .applist{
+            width: 100%;
             margin-top: 40px;
         }
 
@@ -55,9 +60,12 @@
         </div>
     </div>
 
-    <div class="apps" id="apps" >
+    <div class="applist" id="applist" >
         <h2><a type="button" id="create" href="create.php"/>创建 App</a></h2>
         <h2>App 列表</h2>
+    </div>
+
+    <div class="apps" id="apps" >
     </div>
 </div>
 
@@ -100,14 +108,17 @@
     }
 
 
+    window.onload = function (){
+        appsList();
+    }
 
     var loginData = loadLoginData();
     document.getElementById("login").style.display      = (!loginData)?"block":"none";
     document.getElementById("reg").style.display        = (!loginData)?"block":"none";
     document.getElementById("logout").style.display     = (!loginData)?"none":"block";
-    document.getElementById("apps").style.display       = (!loginData)?"none":"block";
+    // document.getElementById("apps").style.display       = (!loginData)?"none":"block";
     document.getElementById("nickname").style.display   = (!loginData)?"none":"block";
-    document.getElementById("create").style.display   = (isPC())?"block":"none";
+    document.getElementById("create").style.display   = (isPC() && loginData)?"block":"none";
 
     if(!loginData){
         document.getElementById("nickname").textContent="";
@@ -116,10 +127,11 @@
         for(var i = childs .length - 1; i >= 0; i--) {
             el.removeChild(childs[i]);
         }
+
+
     }
     else {
         document.getElementById("nickname").textContent = loginData['nickname'];
-        appsList();
     }
 
     $(function(){
