@@ -129,6 +129,10 @@
                     console.log(obj.data);
 
                     var elem_li = document.createElement('li'); // 生成一个 li元素
+                    elem_li.innerHTML =   "<img src=\""+obj.data.logo0+"\" width=\"50px\" height=\"50px\" title=\"\"/>; // 设置元素的内容
+                    document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
+
+                    var elem_li = document.createElement('li'); // 生成一个 li元素
                     elem_li.innerHTML =   obj.data.name+"("+obj.data.app_id +")"; // 设置元素的内容
                     document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
 
