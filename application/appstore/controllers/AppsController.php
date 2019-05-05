@@ -84,6 +84,7 @@ class AppsController extends Controller
                 'user_id'   => $user_id,
                 'ver_id'   => $appVerID,
                 'type'   => $_POST["type"],
+                'bundle_id'=> $_POST["bundle_id"],
                 'logo0'   => $logo0,
                 'logo1'   => $logo1,
 
