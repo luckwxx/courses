@@ -16,7 +16,7 @@
             height: 280px;
             position: absolute;
             left: 50%;
-            margin-left: -190px;
+            margin-left: -140px;
             top: 50%;
             margin-top: -140px;
         }
