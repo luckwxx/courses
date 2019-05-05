@@ -51,8 +51,11 @@
 
     </style>
 <!--    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"/>-->
-    <script src="user.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.0.js"></script>
+    <script src="js/user.js"></script>
+<!--    <script src="https://code.jquery.com/jquery-3.4.0.js"></script>-->
+    <script type="text/javascript" src="js/jquery.min.js" ></script>
+    <script type="text/javascript" src="js/qrcode.min.js" ></script>
+
 </head>
 
 <body>
@@ -100,9 +103,12 @@
         </div>
     </div>
 
+    <div id="qrcodeTable"></div>
+
 </div>
 
 <script type="text/javascript">
+
 
     function appsDetail(){
 
@@ -129,7 +135,7 @@
                     console.log(obj.data);
 
                     var elem_li = document.createElement('li'); // 生成一个 li元素
-                    elem_li.innerHTML =   "<img src=\""+obj.data.logo0+"\" width=\"50px\" height=\"50px\" title=\"\"/>; // 设置元素的内容
+                    elem_li.innerHTML =   "<img src=\""+obj.data.logo0+"\" width=\"50px\" height=\"50px\" title=\"\"/>"; // 设置元素的内容
                     document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
 
                     var elem_li = document.createElement('li'); // 生成一个 li元素
@@ -163,6 +169,17 @@
         });
     }
 
+    // 简单方式
+    // new QRCode(document.getElementById('qrcodeTable'), window.location.href);
+    // 设置参数方式
+    var qrcode = new QRCode('qrcodeTable', {
+        text: window.location.href,
+        width: 100,
+        height: 100,
+        colorDark : '#000000',
+        colorLight : '#ffffff',
+        correctLevel : QRCode.CorrectLevel.H
+    });
 
 
     var loginData = loadLoginData();

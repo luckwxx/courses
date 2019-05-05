@@ -28,7 +28,7 @@
             justify-content: center;
         }
     </style>
-    <script src="user.js"></script>
+    <script src="js/user.js"></script>
 </head>
 
 
@@ -65,7 +65,7 @@
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>
 
-<script src="https://code.jquery.com/jquery-3.4.0.js"></script>
+<script type="text/javascript" src="js/jquery.min.js" ></script>
 <script type="text/javascript">
 
     $(function(){
