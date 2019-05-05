@@ -81,8 +81,8 @@ CREATE TABLE `course_group` (
   `enroll` tinyint(1) NOT NULL DEFAULT '0',
   `top` tinyint(1) NOT NULL DEFAULT '0',
   `home` tinyint(1) NOT NULL DEFAULT '0',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `update_time` datetime NOT NULL ,
+  `create_time` datetime NOT NULL 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
 ;
 
@@ -91,7 +91,7 @@ CREATE TABLE `course_group` (
 --
 
 INSERT INTO `course_group` (`id`, `user_id`, `title`, `introduce`, `cover_image`, `type`, `content_type`, `label`, `color`, `enroll`, `top`, `home`, `update_time`, `create_time`) VALUES
-(1, 11, 'title', 'introduce', '/upload/img/650a5bb99fef3ecfd47e93728fad97bb.png', 'type', 'content_type', 'label', '0xffffff', 0, 0, 0, '2018-11-23 13:23:00', '2018-11-23 13:23:00'),
+(1, 11, 'title', 'introduce', '/upload/img/650a5bb99fef3ecfd47e93728fad97bb.png', 'type', 'content_type', 'label', '0xffffff', 0, 0, 0, '2018-11-23 13:23:00', '2018-11-23 13:23:00');
 
 -- --------------------------------------------------------
 

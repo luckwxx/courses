@@ -226,7 +226,7 @@ class AppsController extends Controller
             $veritem = (new AppVersModel)->select($item['ver_id']);
 
 
-            $this->sendResponse(200, $item+$veritem);
+            $this->sendResponse(200, array_merge($item, $veritem));
         }
         else
             $this->sendResponse(10000,'',"参数错误");
