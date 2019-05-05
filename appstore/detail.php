@@ -181,14 +181,18 @@
         correctLevel : QRCode.CorrectLevel.H
     });
 
+    window.onload = function () {
+        appsDetail();
+    }
+
 
     var loginData = loadLoginData();
     document.getElementById("login").style.display      = (!loginData)?"block":"none";
     document.getElementById("reg").style.display        = (!loginData)?"block":"none";
     document.getElementById("logout").style.display     = (!loginData)?"none":"block";
-    document.getElementById("apps").style.display       = (!loginData)?"none":"block";
+    // document.getElementById("apps").style.display       = (!loginData)?"none":"block";
     document.getElementById("nickname").style.display   = (!loginData)?"none":"block";
-    document.getElementById("panel1").style.display   = (isPC())?"block":"none";
+    document.getElementById("panel1").style.display   = (isPC()&&loginData)?"block":"none";
 
     if(!loginData){
         document.getElementById("nickname").textContent="";
@@ -200,7 +204,6 @@
     }
     else {
         document.getElementById("nickname").textContent = loginData['nickname'];
-        appsDetail();
     }
 
 
