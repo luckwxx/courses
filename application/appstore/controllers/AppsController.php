@@ -304,7 +304,7 @@ class AppsController extends Controller
         $txt = $txt.$title;
         $txt = $txt.'</h1>
 <p class="desc">';
-        $txt = $txt.$desc;
+        $txt = $txt.$title;
         $txt = $txt.'</p>
 <section style="padding-top: 150px;" class="footer">
 <a href="itms-services:///?action=download-manifest&url=';
