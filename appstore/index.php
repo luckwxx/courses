@@ -86,7 +86,7 @@
                         console.log(index,obj.data[index]);
 
                         var elem_li = document.createElement('li'); // 生成一个 li元素
-                        elem_li.innerHTML = obj.data[index].id + "   <a type=\"button\" class=\"app_detail\" href=\"detail.php?app_id="+obj.data[index].id +"\"/>" + obj.data[index].name + "</a>  " + obj.data[index].describe; // 设置元素的内容
+                        elem_li.innerHTML = "<img src=\""+obj.data[index].logo0+"\" width=\"20px\" height=\"20px\" title=\"\"/>(" + obj.data[index].id + ")<a type=\"button\" class=\"app_detail\" href=\"detail.php?app_id="+obj.data[index].id +"\"/>" + obj.data[index].name + "</a>  " + obj.data[index].describe; // 设置元素的内容
                         document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
 
                         // $("#apps tbody").append(obj.data[index].toString()+"<br>");
@@ -107,6 +107,8 @@
     document.getElementById("logout").style.display     = (!loginData)?"none":"block";
     document.getElementById("apps").style.display       = (!loginData)?"none":"block";
     document.getElementById("nickname").style.display   = (!loginData)?"none":"block";
+    document.getElementById("create").style.display   = (isPC())?"block":"none";
+
     if(!loginData){
         document.getElementById("nickname").textContent="";
         var el = document.getElementById('apps');

@@ -70,7 +70,7 @@
         <h1>App 详情</h1>
     </div>
 
-    <div class="panel1 panel-primary">
+    <div class="panel1 panel-primary" id="panel1">
         <div class="panel1-heading">
             <div class="panel1-title">上传 新版本</div>
         </div>
@@ -167,6 +167,8 @@
     document.getElementById("logout").style.display     = (!loginData)?"none":"block";
     document.getElementById("apps").style.display       = (!loginData)?"none":"block";
     document.getElementById("nickname").style.display   = (!loginData)?"none":"block";
+    document.getElementById("panel1").style.display   = (isPC())?"block":"none";
+
     if(!loginData){
         document.getElementById("nickname").textContent="";
         var el = document.getElementById('apps');
