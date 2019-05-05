@@ -238,7 +238,11 @@ ALTER TABLE `user_auths`
 --
 -- 在导出的表使用AUTO_INCREMENT
 --
+ALTER TABLE `apps`
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `app_vers`
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT;
 -- 使用表AUTO_INCREMENT `course_group`
 --
 ALTER TABLE `course_group`
