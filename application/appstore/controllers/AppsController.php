@@ -141,7 +141,7 @@ class AppsController extends Controller
             //创建index.html href="itms-services:///?action=download-manifest&url=https://hanjx.tk/app/vhallyundemo/manifest.plist"
             $packageHost = 'https://hanjx.tk/';
             $plistUrl = $packageHost.$packageDir.'manifest.plist';
-            $this->writeIndexFile($packageDir,$item["name"],$item["describe"],$plistUrl);
+            $this->writeIndexFile($packageDir,$item["name"].'('.strval($_POST["ver"]).")",$item["describe"],$plistUrl);
 
             //创建manifest.plist
             $bundleid = $item["bundle_id"];
