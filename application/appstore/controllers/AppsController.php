@@ -13,6 +13,7 @@ class AppsController extends Controller
         if (isset($_POST["name"]) &&
             isset($_POST["type"]) &&
             isset($_POST["token"]) &&
+            isset($_POST["bundle_id"]) &&
             isset($_POST["ver"])) {
 
             //验证token
@@ -52,7 +53,7 @@ class AppsController extends Controller
             $this->writeIndexFile($packageDir,$_POST["name"],$_POST["describe"],$plistUrl);
 
             //创建manifest.plist
-            $bundleid = 'com.vhallyun.sdk';
+            $bundleid = $_POST["bundle_id"];
             $bundleversion = $_POST["ver"];
             $title = $_POST["name"];
 
@@ -96,10 +97,97 @@ class AppsController extends Controller
             $this->sendResponse(10000,'',"参数错误");
     }
 
-/*
- *  pos_id
- *  size
+
+    /*
+ * 创建app ver
  */
+    public function createver()
+    {
+        // Check for required parameters
+        if (isset($_POST["token"]) &&
+            isset($_POST["app_id"]) &&
+            isset($_POST["ver"]) &&
+            isset($_POST["ver_build"])) {
+
+            //验证token
+            $de_json = json_decode(base64_decode($_POST["token"]),TRUE);
+            $user_id = $de_json["user_id"];
+            if(!$user_id){
+                $this->sendResponse(10000,'',"token参数错误");
+                return;
+            }
+
+            //获取要创建app_id
+            $app_id = $_POST["app_id"];
+
+
+            $item = (new AppsModel)->select($app_id);
+
+            if ( $item == null) {//没有安装包报错
+                $this->sendResponse(10002,'',"app_id 不存在");
+                return;
+            }
+
+            $appDir = "upload/apps/".strval($app_id)."/";
+            $packageDir = $appDir.strval($_POST["ver"])."/";
+            //上传安装包
+            $package = $this->saveUploadFile($packageDir,'package');
+            if ( $package === '') {//没有安装包报错
+                $this->sendResponse(10001,'',"上传安装包错误");
+                return;
+            }
+
+            //创建index.html href="itms-services:///?action=download-manifest&url=https://hanjx.tk/app/vhallyundemo/manifest.plist"
+            $packageHost = 'https://hanjx.tk/';
+            $plistUrl = $packageHost.$packageDir.'manifest.plist';
+            $this->writeIndexFile($packageDir,$item["name"],$item["describe"],$plistUrl);
+
+            //创建manifest.plist
+            $bundleid = $item["bundle_id"];
+            $bundleversion = $_POST["ver"];
+            $title = $item["name"];
+
+            $logo0 = $item['logo0'];
+            $logo1 = $item['logo1'];
+
+            $this->writePlistFile($packageDir,$packageHost.$package,$packageHost.$logo0,$packageHost.$logo1, $bundleid,$bundleversion,$title);
+
+            //入库
+            $appVersModel = new AppVersModel();
+            $appVerID = 0;
+            //获取 appVerID
+            $item = $appVersModel->query("select max(id) AS id from app_vers;");//
+            if (count($item) > 0) {
+                $appVerID = intval($item["id"])+1;
+            }
+
+            $date = date('Y-m-d H:i:s');
+            $data = array(
+                "ver"            => $_POST["ver"],
+                'app_id'         => $app_id,
+                'package'        => $package,
+                'ver_build'      => $_POST["ver_build"],
+                'create_time'   => $date,
+                'update_time'   => $date);
+            $appVersModel->add($data);
+
+            $data1 = array(
+                'ver_id'   => $appVerID,
+                'update_time' => $date);
+            (new AppsModel())->update($app_id,$data1);
+
+
+            $this->sendResponse(200, $data, "创建成功");
+        }
+        else
+            $this->sendResponse(10000,'',"参数错误");
+    }
+
+
+    /*
+     *  pos_id
+     *  size
+     */
     public function applist()
     {
         // Check for required parameters
@@ -135,7 +223,10 @@ class AppsController extends Controller
         $app_id = $_POST["app_id"];
         if (isset($app_id) ) {
             $item = (new AppsModel)->select($app_id);
-            $this->sendResponse(200, $item);
+            $veritem = (new AppVersModel)->select($item['ver_id']);
+
+
+            $this->sendResponse(200, $item+$veritem);
         }
         else
             $this->sendResponse(10000,'',"参数错误");
