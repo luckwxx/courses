@@ -385,4 +385,97 @@ class AppsController extends Controller
         fclose($myfile);
     }
 
+//上传多个文件到upload/baby/  https://blog.csdn.net/wry_developer/article/details/75566305
+    public function test()
+    {
+        $babyDir = "upload/baby/";
+        $this->uploadfile($babyDir);
+        $this->sendResponse(200, '', "创建成功");
+    }
+
+
+    function buildInfo(){
+     $info = $_FILES;
+        $i = 0;
+        foreach ($_FILES as $v){//三维数组转换成2维数组
+            if(is_string($v['name'])){ //单文件上传
+                $info[$i] = $v;
+                $i++;
+            }else{ // 多文件上传
+                foreach ($v['name'] as $key=>$val){//2维数组转换成1维数组
+                    //取出一维数组的值，然后形成另一个数组
+                    //新的数组的结构为：info=>i=>('name','size'.....)
+                    $info[$i]['name'] = $v['name'][$key];
+                    $info[$i]['size'] = $v['size'][$key];
+                    $info[$i]['type'] = $v['type'][$key];
+                    $info[$i]['tmp_name'] = $v['tmp_name'][$key];
+                    $info[$i]['error'] = $v['error'][$key];
+                    $i++;
+                }
+            }
+        }
+        return $info;
+    }
+
+    function uploadfile($path="uploads",
+                        $allowExt = array('png','jpg','jpeg','gif','mmp','qnmlgb'),
+                        $maxSize=10485760,$imgFlag=true){
+
+        Tools::checkDir("./".$path);//检查目录是否存在并创建
+
+        $uploadedFiles = array();
+        $i = 0;
+        $infoArr = $this->buildInfo();
+        foreach ($infoArr as $val) {
+            if ($val['error'] === UPLOAD_ERR_OK) {
+
+                if($val['size']>$maxSize){
+                    $mes = "文件太大了";
+                    exit;
+                }
+
+                if(!is_uploaded_file($val['tmp_name'])){
+                    $mes = "不是通过httppost传输的";
+                    exit;
+                }
+
+                $realName = $val['name'];
+                $destination = $path."/".$realName;
+                if(move_uploaded_file($val['tmp_name'], APP_PATH.$destination)){
+                    $val['name'] = $realName;
+                    unset($val['error'],$val['tmp_name'],$val['size'],$val['type']);
+
+                    $uploadedFiles[$i]=$val;//?????????
+                    $i++;
+                }
+            }else {
+                switch ($val['error']) {
+                    case 1: // UPLOAD_ERR_INI_SIZE
+                        $mes = "超过配置文件中上传文件的大小";
+                        break;
+                    case 2: // UPLOAD_ERR_FORM_SIZE
+                        $mes = "超过表单中配置文件的大小";
+                        break;
+                    case 3: // UPLOAD_ERR_PARTIAL
+                        $mes = "文件被部分上传";
+                        break;
+                    case 4: // UPLOAD_ERR_NO_FILE
+                        $mes = "没有文件被上传";
+                        break;
+                    case 6: // UPLOAD_ERR_NO_TMP_DIR
+                        $mes = "没有找到临事文件目录";
+                        break;
+                    case 7: // UPLOAD_ERR_CANT_WRITE
+                        $mes = "文件不可写";
+                        break;
+                    case 8: // UPLOAD_ERR_EXTENSION
+                        $mes = "php扩展程序中断了上传程序";
+                        break;
+                }
+                echo $mes;
+            }
+        }
+
+        return $uploadedFiles;
+    }
 }
