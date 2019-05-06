@@ -3,80 +3,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>App Store</title>
-    <script src="js/user.js"></script>
-    <script type="text/javascript" src="js/jquery.min.js" ></script>
-
 
     <style type="text/css">
+        body{
+            margin: 0px;
+            padding: 0px;
+            background-color: #CCCCCC;
+        }
+        .panel{
+            width: 100%;
+            position: absolute;
+            top: 3%;
+            /*margin-top: -140px;*/
+            text-align:right;
+            margin-right: 20px;
+        }
 
         .login{
-            position:absolute;
-            right:20px;
-            width: 200px;
+            width: 100%;
+            float: right;
         }
 
-        div.img
-        {
-            margin:3px;
-            border:1px solid #bebebe;
-            height:auto;
-            width:auto;
-            float:left;
-            text-align:center;
-        }
-        div.img img
-        {
-            display:inline;
-            margin:3px;
-            border:1px solid #bebebe;
-        }
-        div.img a:hover img
-        {
-            border:1px solid #333333;
-        }
-        div.desc
-        {
-            text-align:center;
-            font-weight:normal;
-            width:150px;
-            font-size:12px;
-            margin:10px 5px 10px 5px;
+        .apps{
+            width: 100%;
+            margin-top: 0px;
         }
 
+        .applist{
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .form-horizontal{
+            padding: 10px 20px;
+        }
+        .btns{
+            display: flex;
+            justify-content: center;
+        }
     </style>
+    <script src="js/user.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js" ></script>
 </head>
 
 <body>
-<div class="head">
+<div>
     <div class="panel panel-primary">
-    </div>
-
-    <div class="login">
+        <div class="login">
             <a type="button" id="nickname"/></a>
-
-        <div class="login-left" style="width: 80px">
             <a type="button" id="login"  href="login.php"/>登录</a>
-        </div>
-        <div class="login_right" style="width: 80px">
-            <a type="button" id="reg"  href="reg.php"/>注册</a>
-        </div>
-        <div class="logout" style="width: 80px">
+            <a type="button" id="reg"    href="reg.php"/>注册</a>
             <a type="button" id="logout" href=""/> 退出</a>
         </div>
     </div>
+
+    <div class="applist" id="applist" >
+        <h2><a type="button" id="create" href="create.php"/>创建 App</a></h2>
+        <h2>App 列表</h2>
+    </div>
+
+    <div class="apps" id="apps" >
+    </div>
 </div>
-
-
-<div class="applist" id="applist" >
-    <h2><a type="button" id="create" href="create.php"/>创建 App</a></h2>
-    <h2>App 列表</h2>
-</div>
-
-
-<div class="apps" id="apps" >
-
-</div>
-
 
 <script type="text/javascript">
 
@@ -102,15 +90,9 @@
                     for(let index in obj.data) {
                         console.log(index,obj.data[index]);
 
-                        var elem_div = document.createElement('div'); // 生成一个 li元素
-                        elem_div.className = "img";
-                        var str = '<a target="_blank" href="detail.php?app_id='+ obj.data[index].id +
-                            '"><img src="'+ obj.data[index].logo0 +
-                            '" alt="'+ obj.data[index].name +
-                            '" width="160" height="160"></a><div class="desc">'+ obj.data[index].name +
-                            '</div>';
-                        elem_div.innerHTML = str; // 设置元素的内容
-                        document.getElementById('apps').appendChild(elem_div); // 添加到UL中去
+                        var elem_li = document.createElement('li'); // 生成一个 li元素
+                        elem_li.innerHTML = "<img src=\""+obj.data[index].logo0+"\" width=\"20px\" height=\"20px\" title=\"\"/>(" + obj.data[index].id + ")<a type=\"button\" class=\"app_detail\" href=\"detail.php?app_id="+obj.data[index].id +"\"/>" + obj.data[index].name + "</a>  " + obj.data[index].describe; // 设置元素的内容
+                        document.getElementById('apps').appendChild(elem_li); // 添加到UL中去
 
                         // $("#apps tbody").append(obj.data[index].toString()+"<br>");
                     };
@@ -121,7 +103,6 @@
             }
         });
     }
-
 
 
     window.onload = function (){
